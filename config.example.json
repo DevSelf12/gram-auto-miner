@@ -1,0 +1,16 @@
+{
+  "api_id": 0,
+  "api_hash": "YOUR_API_HASH",
+  "phone": "+62xxxxxxxxxx",
+  "password": "",
+  "bot_username": "gramnetwork_bot",
+  "worker_url": "",
+  "notes": {
+    "api_id": "Dapatkan dari https://my.telegram.org/apps",
+    "api_hash": "Dapatkan dari https://my.telegram.org/apps",
+    "phone": "Nomor HP yang dipake login Telegram",
+    "password": "Password 2FA Telegram (kosongkan jika tidak ada)",
+    "bot_username": "Username bot Gram Network (default: gramnetwork_bot)",
+    "worker_url": "URL Cloudflare Worker (opsional, kosongkan jika tidak pakai)"
+  }
+}

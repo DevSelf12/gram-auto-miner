@@ -1,0 +1,17 @@
+# Sensitive files
+config.json
+*.session
+*.session-journal
+
+# Logs
+*.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
