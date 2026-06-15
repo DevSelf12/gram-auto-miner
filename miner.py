@@ -248,7 +248,7 @@ def print_dashboard(accounts, cfg):
         # Status icon
         if "ready" in status.lower() or "claim" in status.lower():
             icon = "💰"
-        elif "active" in status.lower() or "mining" in status.lower():
+        elif status.lower().startswith("active") or "mining" in status.lower():
             icon = "⛏️"
         elif a.error:
             icon = "❌"
