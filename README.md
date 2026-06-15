@@ -105,19 +105,7 @@ python3 miner.py
 
 If your VPS gets HTTP 403 from Gram Network API (common on cloud IPs like AWS, GCP, Azure), you need a Cloudflare Worker as proxy.
 
-### Option A: Use Existing Worker (Easiest)
-
-If someone already has a Worker, just add the URL to config.json:
-
-```json
-"worker_url": "https://gram.kriptobisnis.workers.dev"
-```
-
-Skip to step 5 below. No Cloudflare account needed!
-
-### Option B: Deploy Your Own Worker
-
-#### Step 1 — Create Cloudflare Account (Free)
+### Step 1 — Create Cloudflare Account (Free)
 
 Go to https://dash.cloudflare.com/sign-up and register.
 
