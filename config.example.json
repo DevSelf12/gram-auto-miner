@@ -1,16 +1,23 @@
 {
-  "api_id": 0,
-  "api_hash": "YOUR_API_HASH",
-  "phone": "+62xxxxxxxxxx",
-  "password": "",
+  "accounts": [
+    {
+      "name": "Akun 1",
+      "api_id": 12345678,
+      "api_hash": "abcdef1234567890abcdef1234567890",
+      "phone": "+628xxxxxxxxxx",
+      "password": "",
+      "proxy": ""
+    },
+    {
+      "name": "Akun 2",
+      "api_id": 87654321,
+      "api_hash": "fedcba0987654321fedcba0987654321",
+      "phone": "+628yyyyyyyyyy",
+      "password": "",
+      "proxy": ""
+    }
+  ],
   "bot_username": "gramnetwork_bot",
   "worker_url": "",
-  "notes": {
-    "api_id": "Dapatkan dari https://my.telegram.org/apps",
-    "api_hash": "Dapatkan dari https://my.telegram.org/apps",
-    "phone": "Nomor HP yang dipake login Telegram",
-    "password": "Password 2FA Telegram (kosongkan jika tidak ada)",
-    "bot_username": "Username bot Gram Network (default: gramnetwork_bot)",
-    "worker_url": "URL Cloudflare Worker (opsional, kosongkan jika tidak pakai)"
-  }
+  "random_delay_max_minutes": 5
 }
