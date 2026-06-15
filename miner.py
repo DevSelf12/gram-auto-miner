@@ -363,6 +363,7 @@ async def mining_cycle(acc, cfg):
             api_call("POST", "claim_daily.php", init_data, worker_url, acc.proxy)
             
             status = acc.mining_status.lower()
+            log.info(f"[{acc.name}] Status='{status}', time_left={acc.time_left}, balance={acc.balance}, earned={acc.tokens_earned}")
             
             # Random delay
             delay = random_delay(max_delay)
@@ -408,8 +409,8 @@ async def mining_cycle(acc, cfg):
                 acc.next_action = datetime.now() + timedelta(seconds=SESSION_SECONDS)
                 await asyncio.sleep(SESSION_SECONDS)
             
-            # Active mining
-            elif "active" in status or acc.time_left > 0:
+            # Active mining (but check if it's a false positive for new accounts)
+            elif ("active" in status or acc.time_left > 0) and (acc.balance > 0 or acc.tokens_earned > 0):
                 wait = acc.time_left + random_delay(max_delay)
                 log.info(f"[{acc.name}] Mining active. Next claim in {fmt_time(wait)}")
                 acc.next_action_type = "claim"
@@ -421,14 +422,34 @@ async def mining_cycle(acc, cfg):
                     claim = api_call("POST", "claim_mining.php", init_data, worker_url, acc.proxy)
                     if claim and claim.get("success"):
                         log.info(f"[{acc.name}] Claimed!")
+                    else:
+                        log.info(f"[{acc.name}] Claim result: {claim}")
                 
+                # Start new session after claim
+                delay2 = random_delay(max_delay)
+                log.info(f"[{acc.name}] Waiting {delay2//60}min before starting new session...")
                 acc.next_action_type = "start"
+                acc.next_action = datetime.now() + timedelta(seconds=delay2)
+                await asyncio.sleep(delay2)
+                
+                init_data = await get_fresh_initdata(acc.client, bot_username)
+                if init_data:
+                    result = api_call("POST", "start_mining.php", init_data, worker_url, acc.proxy)
+                    if result and result.get("success"):
+                        log.info(f"[{acc.name}] Mining started!")
+                    else:
+                        log.info(f"[{acc.name}] Start result: {result}")
+                
+                acc.next_action_type = "claim"
                 acc.next_action = datetime.now() + timedelta(seconds=SESSION_SECONDS)
                 await asyncio.sleep(SESSION_SECONDS)
             
-            # Inactive
+            # New account or inactive (balance=0, earned=0, or inactive status)
             else:
-                log.info(f"[{acc.name}] Inactive. Starting in {delay_mins}min...")
+                if "active" in status:
+                    log.info(f"[{acc.name}] Status says active but balance=0. Starting fresh...")
+                else:
+                    log.info(f"[{acc.name}] Inactive. Starting in {delay_mins}min...")
                 acc.next_action_type = "start"
                 acc.next_action = datetime.now() + timedelta(seconds=delay)
                 await asyncio.sleep(delay)
@@ -460,7 +481,8 @@ async def mining_cycle(acc, cfg):
 # ═══════════════════════════════════════════════════════════════════
 
 async def dashboard_task(accounts, cfg):
-    """Refresh dashboard every 60 seconds."""
+    """Refresh dashboard every 60 seconds, wait for first data."""
+    await asyncio.sleep(10)  # Wait for first mining cycle to fetch data
     while True:
         print_dashboard(accounts, cfg)
         await asyncio.sleep(60)
