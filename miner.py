@@ -214,6 +214,23 @@ def random_delay(max_minutes):
     return random.randint(60, max_minutes * 60)
 
 
+async def simulate_energy_clicks(acc, init_data, worker_url, duration_seconds):
+    """Simulate human-like energy clicks during mining session."""
+    elapsed = 0
+    while elapsed < duration_seconds:
+        # Random interval between 5-15 minutes
+        wait = random.randint(300, 900)
+        await asyncio.sleep(min(wait, duration_seconds - elapsed))
+        elapsed += wait
+        if elapsed >= duration_seconds:
+            break
+        
+        # Click energy
+        result = api_call("POST", "click.php", init_data, worker_url, acc.proxy)
+        if result:
+            log.info(f"[{acc.name}] Energy click done")
+
+
 # ═══════════════════════════════════════════════════════════════════
 # DASHBOARD
 # ═══════════════════════════════════════════════════════════════════
@@ -407,7 +424,8 @@ async def mining_cycle(acc, cfg):
                 
                 acc.next_action_type = "claim"
                 acc.next_action = datetime.now() + timedelta(seconds=SESSION_SECONDS)
-                await asyncio.sleep(SESSION_SECONDS)
+                # Simulate energy clicks during wait
+                await simulate_energy_clicks(acc, init_data, worker_url, SESSION_SECONDS)
             
             # Active mining — trust API if time_left > 0
             elif ("active" in status or acc.time_left > 0):
@@ -415,7 +433,8 @@ async def mining_cycle(acc, cfg):
                 log.info(f"[{acc.name}] Mining active. Next claim in {fmt_time(wait)}")
                 acc.next_action_type = "claim"
                 acc.next_action = datetime.now() + timedelta(seconds=wait)
-                await asyncio.sleep(wait)
+                # Simulate energy clicks during wait
+                await simulate_energy_clicks(acc, init_data, worker_url, wait)
                 
                 init_data = await get_fresh_initdata(acc.client, bot_username)
                 if init_data:
@@ -442,7 +461,8 @@ async def mining_cycle(acc, cfg):
                 
                 acc.next_action_type = "claim"
                 acc.next_action = datetime.now() + timedelta(seconds=SESSION_SECONDS)
-                await asyncio.sleep(SESSION_SECONDS)
+                # Simulate energy clicks during wait
+                await simulate_energy_clicks(acc, init_data, worker_url, SESSION_SECONDS)
             
             # New account or inactive (balance=0, earned=0, or inactive status)
             else:
@@ -466,7 +486,7 @@ async def mining_cycle(acc, cfg):
                 
                 acc.next_action_type = "claim"
                 acc.next_action = datetime.now() + timedelta(seconds=SESSION_SECONDS)
-                await asyncio.sleep(SESSION_SECONDS)
+                await simulate_energy_clicks(acc, init_data, worker_url, SESSION_SECONDS)
         
         except Exception as e:
             acc.error = str(e)[:30]

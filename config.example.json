@@ -19,5 +19,5 @@
   ],
   "bot_username": "gramnetwork_bot",
   "worker_url": "",
-  "random_delay_max_minutes": 5
+  "random_delay_max_minutes": 10
 }
