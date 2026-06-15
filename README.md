@@ -103,20 +103,91 @@ python3 miner.py
 
 ## Cloudflare Worker (Optional)
 
-If your VPS gets HTTP 403 from Gram Network API (common on cloud IPs):
+If your VPS gets HTTP 403 from Gram Network API (common on cloud IPs like AWS, GCP, Azure), you need a Cloudflare Worker as proxy.
+
+### Option A: Use Existing Worker (Easiest)
+
+If someone already has a Worker, just add the URL to config.json:
+
+```json
+"worker_url": "https://gram.kriptobisnis.workers.dev"
+```
+
+Skip to step 5 below. No Cloudflare account needed!
+
+### Option B: Deploy Your Own Worker
+
+#### Step 1 — Create Cloudflare Account (Free)
+
+Go to https://dash.cloudflare.com/sign-up and register.
+
+#### Step 2 — Create API Token
+
+1. Go to https://dash.cloudflare.com/profile/api-tokens
+2. Click **"Create Token"**
+3. Find **"Edit Cloudflare Workers"** template → click **"Use template"**
+4. Or create custom:
+   - **Permissions:** Account > Workers Scripts > Edit
+   - **Account Resources:** Select your account
+5. Click **"Continue to summary"** → **"Create Token"**
+6. **Copy the token** (starts with `cfat_...`) — you won't see it again!
+
+#### Step 3 — Get Account ID
+
+1. Go to https://dash.cloudflare.com
+2. Click on your account (left sidebar)
+3. Look at the URL: `dash.cloudflare.com/3b9c8da4fce77f661ab7aaed81a896a5`
+4. The long string after `/` is your **Account ID** — copy it
+
+#### Step 4 — Deploy Worker
 
 ```bash
 python3 deploy_worker.py
 ```
 
-This creates a free Cloudflare Worker that proxies API requests.
+- Paste your **Account ID**
+- Paste your **API Token**
+- The script deploys the Worker and auto-updates config.json
 
-**How it works:**
+If it asks for a subdomain, enter any name (e.g. `yourname`).
+
+#### Step 5 — Verify
+
+After deploy, your Worker URL will be something like:
+
+```
+https://gram-network-proxy.yourname.workers.dev
+```
+
+The script adds this to config.json automatically. If you used Option A, make sure `worker_url` is filled in config.json.
+
+#### Step 6 — Run Miner
+
+```bash
+python3 miner.py
+```
+
+Check logs — if you see user data (balance, mining status), the Worker is working!
+
+### How It Works
 
 ```
 Your VPS ──► Cloudflare Worker ──► Gram Network API
             (bypasses IP block)
 ```
+
+Without Worker: VPS IP (AWS/GCP) → blocked (HTTP 403)
+With Worker: VPS → Cloudflare → Gram API (allowed)
+
+### Troubleshooting Worker
+
+| Problem | Solution |
+|---------|----------|
+| `Invalid API token` | Create new token at api-tokens page |
+| `Account ID wrong` | Check URL: `dash.cloudflare.com/<ID>` |
+| `Worker deploy failed` | Check token has "Workers Scripts > Edit" permission |
+| `HTTP 403 still` | Make sure `worker_url` is filled in config.json |
+| `No subdomain` | Script will ask you to create one |
 
 ## Proxy (Optional)
 
