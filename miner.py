@@ -223,7 +223,7 @@ def print_dashboard(accounts, cfg):
     os.system('cls' if os.name == 'nt' else 'clear')
     
     total_balance = sum(a.balance for a in accounts)
-    active_count = sum(1 for a in accounts if a.mining_status in ("active", "mining"))
+    active_count = sum(1 for a in accounts if a.mining_status.lower() in ("active", "mining"))
     ready_count = sum(1 for a in accounts if "ready" in a.mining_status.lower() or "claim" in a.mining_status.lower())
     
     print()
