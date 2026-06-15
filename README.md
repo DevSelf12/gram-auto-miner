@@ -151,9 +151,9 @@ The bot shows a live terminal dashboard:
 
   #   Name            Username         Balance Status     Next Action   Countdown
   --- --------------- ---------------- ------- ------------ -------------- ------------
-  1   Akun Utama      @rizvanbaihaqi    10.80 ⛏️ active    claim          02:15:30
-  2   Akun Kedua      @account2          5.40 💰 ready     claim          00:03:42
-  3   Akun Ketiga     @account3          0.00 💤 inactive  start          00:01:15
+  1   Account 1       @user1           10.80 ⛏️ active    claim          02:15:30
+  2   Account 2       @user2            5.40 💰 ready     claim          00:03:42
+  3   Account 3       @user3            0.00 💤 inactive  start          00:01:15
 
 ==============================================================
   Next refresh in 60s | Ctrl+C to stop
