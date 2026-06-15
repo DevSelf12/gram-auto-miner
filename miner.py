@@ -409,8 +409,8 @@ async def mining_cycle(acc, cfg):
                 acc.next_action = datetime.now() + timedelta(seconds=SESSION_SECONDS)
                 await asyncio.sleep(SESSION_SECONDS)
             
-            # Active mining (but check if it's a false positive for new accounts)
-            elif ("active" in status or acc.time_left > 0) and (acc.balance > 0 or acc.tokens_earned > 0):
+            # Active mining (only if actually earned something)
+            elif ("active" in status or acc.time_left > 0) and acc.tokens_earned > 0:
                 wait = acc.time_left + random_delay(max_delay)
                 log.info(f"[{acc.name}] Mining active. Next claim in {fmt_time(wait)}")
                 acc.next_action_type = "claim"
